@@ -1,7 +1,5 @@
 var snabbt,
-
   rotate_container = function() {
-    'use strict';
     var container = document.getElementById('snabbt-stage');
     snabbt(container, {
       rotation: [0, 2*Math.PI, 0],
@@ -12,7 +10,6 @@ var snabbt,
   },
 
   rotate_container_stop = function() {
-    'use strict';
     var container = document.getElementById('snabbt-stage');
     snabbt(container, {
       rotation: [0, 2*Math.PI, 0],
@@ -23,43 +20,48 @@ var snabbt,
   },
 
   create_meetup_elements = function(url){
-    'use strict';
 
     $('#snabbt-stage').append(
-      '<img src="' + url + '" class="meetup-profile-thumbnail">'
+      '<span class="img-container center"><img src="' + url + '" class="meetup-profile-thumbnail"></span>'
       );
   },
 
-
   create_meetup_images = function(data){
-    'use strict';
     for (var i = 0; i < data.results.length; i++) {
-      if (typeof data.results[i].photo === "object"){
-        create_meetup_elements(data.results[i].photo.thumb_link);
+      if (typeof data.results[i].photo === "object" && data.results[i].id != "173713472"){
+        create_meetup_elements(data.results[i].photo.photo_link);
       }
     }
   },
 
-  attentionShakeAnimationElement = function( $elem ) {
-    'use strict';
+  attention_shake = function( $elem, arr, spring, deaccel ) {
     $elem.snabbt('attention', {
-      rotation: [0, 0, 1],
-      springConstant: 15,
-      springDeacceleration: 0.9,
+      rotation: arr,
+      springConstant: spring,
+      springDeacceleration: deaccel,
     });
-  };
+  }
+;
 
-$(document).on('mouseenter', '.meetup-profile-thumbnail', function(e){
-  'use strict';
-  $(e.currentTarget).snabbt('attention', {
-    rotation: [0, 0, 1],
-    springConstant: 15,
-    springDeacceleration: 0.9,
-  });
-});
+
+var eventType;
+if (typeof document.body.ontouchend === "undefined") {
+  eventType = "click";
+} else {
+  eventType = "touchend";
+}
+
+
+$(document)
+  .on('mouseenter', '.meetup-profile-thumbnail', function(e){
+    attention_shake($(e.currentTarget), [0,0,1], 15, 0.9);
+  })
+  .on(eventType, '.wiggler', function(){
+    attention_shake($('.meetup-profile-thumbnail'), [0,0,3], 15, 0.9);
+  })
+;
 
 $(document).ready(function(){
-  'use strict';
     $.ajax({
         url:'https://api.meetup.com/2/members?order=name&group_urlname=CharlestonJS&offset=0&photo-host=public&format=json&page=100&sig_id=170928112&sig=0e6d35e4d5dbd43f7311ded495e31ba1d3ad39a6',
         dataType: 'jsonp',
