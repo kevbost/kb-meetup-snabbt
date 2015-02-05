@@ -19,10 +19,10 @@ body {
   min-width: 480px;
   transform-style: preserve-3d;
   -webkit-transform-style: preserve-3d;
+  height: calc(100vh - 50px);
+  overflow-y: auto;
   #snabbt-stage {
     width: 100%;
-    height: 90vh;
-    overflow-y: hidden;
     transform-style: preserve-3d;
     -webkit-transform-style: preserve-3d;
     // background-color: red;
@@ -34,9 +34,15 @@ body {
 }
 
 .toolbar {
+  $toolHeight: 50px;
   padding: 0px 20px;
-  line-height: 10vh;
-  // background-color: red;
-  height: 10vh;
   width: 100%;
+  line-height: $toolHeight;
+  height: $toolHeight;
+  // background-color: white;
+  background-color: rgba(255, 255, 255, 0.5);
+  // border-top: 2px solid black;
+  box-shadow: 0px 0px 0px 0px black;
+  position: relative;
+  bottom: 0;
 }
