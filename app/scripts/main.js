@@ -14,10 +14,20 @@ var snabbt,
   rotate_container_stop = function() {
     var container = document.getElementById('snabbt-stage');
     snabbt(container, {
-      rotation: [0, 2*Math.PI, 0],
+      fromrotation: [0, -2*Math.PI, 0],
       duration: 1000,
       perspective: 2000,
       loop: 1
+    });
+  },
+
+  rotate_container_xy = function() {
+    var container = document.getElementById('snabbt-stage');
+    snabbt(container, {
+      rotation: [0, 2*Math.PI, 2*Math.PI],
+      duration: 10000,
+      perspective: 2000,
+      loop: Infinity
     });
   },
 
@@ -99,11 +109,7 @@ var snabbt,
 
 
 var eventType;
-if (typeof document.body.ontouchend === "undefined") {
-  eventType = "click";
-} else {
-  eventType = "touchend";
-}
+if (typeof document.body.ontouchend === "undefined") {eventType = "click";} else {eventType = "touchend";}
 
 
 $(document)
@@ -118,6 +124,15 @@ $(document)
   })
   .on(eventType, '.wiggler-in-order-different', function(){
     waave_images_different();
+  })
+  .on(eventType, '.rotate', function(){
+    rotate_container();
+  })
+  .on(eventType, '.rotate-xy', function(){
+    rotate_container_xy();
+  })
+  .on(eventType, '.rotate-stop', function(){
+    rotate_container_stop();
   })
 ;
 
