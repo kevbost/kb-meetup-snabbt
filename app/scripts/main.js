@@ -1,15 +1,37 @@
 var snabbt,
-    images_arr,
-    dataReturn,
     eventType,
+    dataReturn,
 
     Deck = (function(data){
         this.image_list = [];
         this.image_index = [];
+        this.image_split = [];
+
+        this.splitUp = function(arr, n) { // use splitUp(arr, (arr.length / 4.5 or))
+            var rest = arr.length % n,
+                restUsed = rest,
+                partLength = Math.floor(arr.length / n),
+                result = [];
+            for(var i = 0; i < arr.length; i += partLength) {
+                var end = partLength + i,
+                    add = false;
+                if(rest !== 0 && restUsed) {
+                    end++;
+                    restUsed--;
+                    add = true;
+                }
+                result.push(arr.slice(i, end));
+                if(add) {
+                    i++;
+                }
+            }
+            Deck.image_split.push(result);
+            // return Deck.clear_and_rebuild(result);
+        };
 
         this.create_meetup_elements = function(url, id) {
             $('#snabbt-stage').append(
-                '<span class="img-container center"><img id="' + id + '" src="' + url + '" class="meetup-profile-thumbnail"></span>'
+                '<span class="img-container default center"><img id="' + id + '" src="' + url + '" class="meetup-profile-thumbnail default"></span>'
             );
         };
 
@@ -18,12 +40,14 @@ var snabbt,
             for (var i = 0; i < data.results.length; i++) {
                 if (typeof data.results[i].photo === "object" && data.results[i].id != "173713472") {
                     that.create_meetup_elements(data.results[i].photo.photo_link, data.results[i].id);
-                    that.image_list.push(data.results[i].id);
+                    that.image_list.push([data.results[i].photo.photo_link, data.results[i].id]);
                 }
             }
+            // var list = Deck.image_list;
+            this.splitUp(Deck.image_list, (Deck.image_list.length / 3));
         };
 
-        this.next_image = function(data){
+        this.next_image = function(){
             if(this.image_index > this.image_list.length){ return; }
             return this.image_list[this.image_index++];
         };
@@ -36,8 +60,33 @@ var snabbt,
             this.image_index = 0;
         };
 
+        this.create_meetup_elements_split = function(url, id) {
+            $('#snabbt-stage').append(
+                '<row>' +
+                    '<div class="col-xs-3 center">' +
+                    '<span class="img-container-default center"><img id="' + id + '" src=' + url + ' class="meetup-profile-thumbnail"></span>' +
+                    '</div>' +
+                '</row>'
+            );
+        };
+
+        this.clear_and_rebuild = function(data){
+            $('#snabbt-stage').html(' ');
+            var url, id;
+
+            for (var i = 0; i < this.image_split[0].length; i++) {
+                for (var x = 0; x < this.image_split[0][i].length; x++) {
+                    url = this.image_split[0][i][x][0];
+                    id = this.image_split[0][i][x][1];
+                    this.create_meetup_elements_split(url, id);
+                }
+            }
+        };
+
         return this;
     })(),
+
+
 
     rotate_container = function() {
         var container = document.getElementById('snabbt-stage');
@@ -49,10 +98,14 @@ var snabbt,
         });
     },
 
+
+
     rotate_container_stop = function() {
         var container = document.getElementById('snabbt-stage');
         snabbt(container, 'stop');
     },
+
+
 
     rotate_container_reset = function() {
         var container = document.getElementById('snabbt-stage');
@@ -64,6 +117,8 @@ var snabbt,
         });
     },
 
+
+
     rotate_container_xy = function() {
         var container = document.getElementById('snabbt-stage');
         snabbt(container, {
@@ -74,6 +129,8 @@ var snabbt,
         });
     },
 
+
+
     attention_shake = function($elem, arr, spring, deaccel) {
         $elem.snabbt('attention', {
             rotation: arr,
@@ -82,12 +139,14 @@ var snabbt,
         });
     },
 
+
+
     waave_images = function() {
-        snabbt(document.getElementById(Deck.image_list[Deck.image_index]), 'stop');
+        snabbt(document.getElementById(Deck.image_list[Deck.image_index][1]), 'stop');
         Deck.reset();
 
         var interval = setInterval(function() {
-            snabbt(document.getElementById(Deck.image_list[Deck.image_index]), 'attention', {
+            snabbt(document.getElementById(Deck.image_list[Deck.image_index][1]), 'attention', {
                 rotation: [0, 0, 1],
                 springConstant: 15,
                 springDeacceleration: 0.9
@@ -100,18 +159,23 @@ var snabbt,
         }, 20);
     },
 
+
+
     waave_images_different = function(images) {
-        snabbt(document.getElementById(Deck.image_list[Deck.image_index]), 'stop');
+        snabbt(document.getElementById(Deck.image_list[Deck.image_index][1]), 'stop');
         Deck.reset();
 
         var interval = setInterval(function() {
-            snabbt(document.getElementById(Deck.image_list[Deck.image_index]), {
+            snabbt(document.getElementById(Deck.image_list[Deck.image_index][1]), {
                     scale: [0.9, 0.9],
                 duration: 10
             })
             .then({
+                scale: [1.2, 1.2],
+                duration: 1000
+            }).then({
                 scale: [1, 1],
-                duration: 5000
+                duration: 50
             });
             if (Deck.image_index === Deck.image_list.length - 1) {
                 clearInterval(interval);
@@ -120,11 +184,21 @@ var snabbt,
             Deck.next_image();
         }, 10);
 
+    },
+
+
+
+    gridify_deck = function(data){
+        $('.img-container').addClass('col-xs-3 grid').removeClass('default');
+        $('.meetup-profile-thumbnail').addClass('grid').removeClass('default');
     }
 ;
 
 
+
 if (typeof document.body.ontouchend === "undefined") { eventType = "click"; } else { eventType = "touchend"; }
+
+
 
 $(document)
     .ready(function() {
@@ -133,6 +207,7 @@ $(document)
             dataType: 'jsonp',
             success: function(data) {
                 Deck.create_meetup_images(data);
+
                 return dataReturn = data;
             }
         });
@@ -162,4 +237,13 @@ $(document)
     .on(eventType, '.rotate-reset', function() {
         rotate_container_reset();
     })
+    .on(eventType, '.gridify', function() {
+        gridify_deck();
+    })
 ;
+
+
+
+Array.prototype.insert = function (index, item) {
+  this.splice(index, 0, item);
+};

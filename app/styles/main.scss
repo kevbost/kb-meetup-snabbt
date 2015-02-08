@@ -13,10 +13,23 @@ body {
   text-align: center;
 }
 
+.container {
+  min-width: 720px;
+  max-width: 720px;
+}
 
+.img-container {
+  &.default {
+    height: 100%;
+  }
+
+  &.grid {
+    height: 100px;
+    overflow-y: hidden;
+  }
+}
 
 #snabbt-container {
-  min-width: 480px;
   transform-style: preserve-3d;
   -webkit-transform-style: preserve-3d;
   height: 100%;
@@ -27,8 +40,13 @@ body {
     -webkit-transform-style: preserve-3d;
     // background-color: red;
     img {
-      max-height: 100px;
-      // margin: 20px 0;
+      &.default {
+        max-height: 100px;
+      }
+      &.grid {
+        height: auto;
+        width: 100%;
+      }
     }
   }
 }
