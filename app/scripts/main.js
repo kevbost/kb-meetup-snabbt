@@ -110,7 +110,7 @@ var snabbt,
     rotate_container_reset = function() {
         var container = document.getElementById('snabbt-stage');
         snabbt(container, {
-            fromrotation: [0, -2 * Math.PI, 0],
+            rotation: [0, 0, 0],
             duration: 1000,
             perspective: 2000,
             loop: 1
@@ -188,9 +188,92 @@ var snabbt,
 
 
 
-    gridify_deck = function(data){
+
+    gridify_manage = function(){
+        for (var i = 0; i < Deck.image_split[0].length; i++) {
+            for (var x = 0; x < Deck.image_split[0][i].length; x++) {
+                if (x === 0) {
+                    $(document.getElementById(Deck.image_split[0][i][x][1])).addClass('one');
+                }
+                if (x === 1) {
+                    $(document.getElementById(Deck.image_split[0][i][x][1])).addClass('two');
+                }
+                if (x === 2) {
+                    $(document.getElementById(Deck.image_split[0][i][x][1])).addClass('three');
+                }
+                if (x === 3) {
+                    $(document.getElementById(Deck.image_split[0][i][x][1])).addClass('four');
+                }
+            }
+        }
+    },
+
+
+
+    gridify_deck = function(){
         $('.img-container').addClass('col-xs-3 grid').removeClass('default');
         $('.meetup-profile-thumbnail').addClass('grid').removeClass('default');
+        $('.gridify-btn').removeClass('hidden');
+        gridify_manage();
+    },
+
+
+
+    gridify_wiggle = function(){
+
+        for (var i = 0; i < Deck.image_split[0].length; i++) {
+            for (var x = 0; x < Deck.image_split[0][i].length; x++) {
+                if (x === 0) {
+                    snabbt(document.getElementById(Deck.image_split[0][i][x][1]), 'attention', {
+                        rotation: [0, 0, 1],
+                        springConstant: 15,
+                        springDeacceleration: 0.9
+                    });
+                }
+                if (x === 1) {
+                    snabbt(document.getElementById(Deck.image_split[0][i][x][1]), 'attention', {
+                        rotation: [0, 0, 2],
+                        springConstant: 15,
+                        springDeacceleration: 0.9
+                    });
+                }
+                if (x === 2) {
+                    snabbt(document.getElementById(Deck.image_split[0][i][x][1]), 'attention', {
+                        rotation: [0, 0, 3],
+                        springConstant: 15,
+                        springDeacceleration: 0.9
+                    });
+                }
+                if (x === 3) {
+                    snabbt(document.getElementById(Deck.image_split[0][i][x][1]), 'attention', {
+                        rotation: [0, 0, 4],
+                        springConstant: 1,
+                        springDeacceleration: 0.9
+                    });
+                }
+            }
+        }
+    },
+
+
+
+    multi_element_demo = function(){
+        snabbt(document.querySelectorAll('img'), {
+            fromRotation: [0, 0, 0],
+            rotation: function(i, total) {
+                return [0, 0, (i / (total - 1)) * (Math.PI / 2)];
+            },
+            delay: function(i) {
+                return i * 50;
+            },
+            easing: 'spring',
+        }).then({
+            rotation: [0, 0, 0],
+            delay: function(i, total) {
+                return (total - i - 1) * 50;
+            },
+            easing: 'ease',
+        });
     }
 ;
 
@@ -225,6 +308,9 @@ $(document)
     .on(eventType, '.wiggler-in-order-different', function() {
         waave_images_different();
     })
+    .on(eventType, '.multi-element-demo', function() {
+        multi_element_demo();
+    })
     .on(eventType, '.rotate', function() {
         rotate_container();
     })
@@ -240,6 +326,10 @@ $(document)
     .on(eventType, '.gridify', function() {
         gridify_deck();
     })
+    .on(eventType, '.gridify-wiggle', function() {
+        gridify_wiggle();
+    })
+
 ;
 
 
