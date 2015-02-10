@@ -44,7 +44,7 @@ var snabbt,
                 }
             }
             // var list = Deck.image_list;
-            this.splitUp(Deck.image_list, (Deck.image_list.length / 3));
+            this.splitUp(Deck.image_list, (Deck.image_list.length / 4));
         };
 
         this.next_image = function(){
@@ -219,36 +219,40 @@ var snabbt,
 
 
 
+    gridify_shift = function(){
+
+        $('.one').snabbt({});
+
+    },
+
+
+
     gridify_wiggle = function(){
 
         for (var i = 0; i < Deck.image_split[0].length; i++) {
             for (var x = 0; x < Deck.image_split[0][i].length; x++) {
                 if (x === 0) {
-                    snabbt(document.getElementById(Deck.image_split[0][i][x][1]), 'attention', {
+                    snabbt(document.getElementById(Deck.image_split[0][i][x][1]), {
                         rotation: [0, 0, 1],
-                        springConstant: 15,
-                        springDeacceleration: 0.9
+                        delay: 1000
                     });
                 }
                 if (x === 1) {
-                    snabbt(document.getElementById(Deck.image_split[0][i][x][1]), 'attention', {
+                    snabbt(document.getElementById(Deck.image_split[0][i][x][1]), {
                         rotation: [0, 0, 2],
-                        springConstant: 15,
-                        springDeacceleration: 0.9
+                        delay: 1000
                     });
                 }
                 if (x === 2) {
-                    snabbt(document.getElementById(Deck.image_split[0][i][x][1]), 'attention', {
+                    snabbt(document.getElementById(Deck.image_split[0][i][x][1]), {
                         rotation: [0, 0, 3],
-                        springConstant: 15,
-                        springDeacceleration: 0.9
+                        delay: 1000
                     });
                 }
                 if (x === 3) {
-                    snabbt(document.getElementById(Deck.image_split[0][i][x][1]), 'attention', {
+                    snabbt(document.getElementById(Deck.image_split[0][i][x][1]), {
                         rotation: [0, 0, 4],
-                        springConstant: 1,
-                        springDeacceleration: 0.9
+                        delay: 1000
                     });
                 }
             }
@@ -274,7 +278,144 @@ var snabbt,
             },
             easing: 'ease',
         });
+    },
+
+    multi_element_implimentation = function(){
+        snabbt($('.one'), {
+            fromRotation: [0, 0, 0],
+            rotation: function(i, total) {
+                return [0, (i / (total - 5)) * (Math.PI / 2), 0];
+            },
+            delay: function(i) {
+                return i * 50;
+            },
+            easing: 'spring',
+        }).then({
+            rotation: [0, 0, 0],
+            delay: function(i, total) {
+                return (total - i - 1) * 50;
+            },
+            easing: 'ease',
+        });
+    },
+
+    multi_element_simultaneous = function(){
+
+        var defaultPosition = {
+            rotation:       [0, 0, 0],
+            position:       [0, 0, 0],
+            skew:           [0, 0],
+            scale:          [1, 1],
+            delay:          5000,
+            perspective:    0,
+            easing:         'ease',
+        };
+
+        snabbt($('#snabbt-stage'), {
+            fromRotation: [0, 0, 0],
+            rotation: [0, 2 * Math.PI, 0],
+            duration: 6000,
+            perspective: 1000,
+        }).then(defaultPosition);
+
+        snabbt($('.one').parent(), {
+            fromRotation: [0, 0, 0],
+            // fromPerspective: 200,
+            perspective: 2000,
+            rotation: [0, 0.7, 0],
+            fromPosition: [0, 0, 0],
+            position: [0, 0, 0],
+            scale: function(i, total) {
+                var scale_equ = ((i / - total + 1) / Math.PI) + 0.5;
+                var equ = [scale_equ, scale_equ];
+                // window.console.log(equ);
+                return equ;
+            },
+            delay: function(i) {
+                return i * 50;
+            },
+            fromskew: [0, 0],
+            skew: function(i, total) {
+                var equ = [0, i / 10 - 0.2, 0];
+                // window.console.log(equ);
+                return equ;
+            },
+
+        }).then(defaultPosition);
+
+        snabbt($('.two').parent(), {
+            fromRotation: [0, 0, 0],
+            rotation: [0, 0.7, 0],
+            fromPosition: [0, 0, 0],
+            perspective: 100,
+            position: [0, 0, 0],
+            scale: function(i, total) {
+                var scale_equ = ((i / - total + 1) / Math.PI) + 0.5;
+                var equ = [scale_equ, scale_equ];
+                // window.console.log(equ);
+                return equ;
+            },
+            delay: function(i) {
+                return i * 50;
+            },
+            fromskew: [0, 0],
+            skew: function(i, total) {
+                var equ = [0, i / 10 - 0.4, 0];
+                // window.console.log(equ);
+                return equ;
+            },
+
+        }).then(defaultPosition);
+
+        snabbt($('.three').parent(), {
+            fromRotation: [0, 0, 0],
+            rotation: [0, 0.7, 0],
+            fromPosition: [0, 0, 0],
+            perspective: 100,
+            position: [0, 0, 0],
+            scale: function(i, total) {
+                var scale_equ = ((i / - total + 1) / Math.PI) + 0.5;
+                var equ = [scale_equ, scale_equ];
+                // window.console.log(equ);
+                return equ;
+            },
+            delay: function(i) {
+                return i * 50;
+            },
+            fromskew: [0, 0],
+            skew: function(i, total) {
+                var equ = [0, - i / 10 + 0.4, 0];
+                // window.console.log(equ);
+                return equ;
+            },
+
+        }).then(defaultPosition);
+
+        snabbt($('.four').parent(), {
+            fromRotation: [0, 0, 0],
+            rotation: [0, 0.7, 0],
+            fromPosition: [0, 0, 0],
+            perspective: 2000,
+            position: [0, 0, 0],
+            scale: function(i, total) {
+                var scale_equ = ((i / - total + 1) / Math.PI) + 0.5;
+                var equ = [scale_equ, scale_equ];
+                // window.console.log(equ);
+                return equ;
+            },
+            delay: function(i) {
+                return i * 50;
+            },
+            fromskew: [0, 0],
+            skew: function(i, total) {
+                var equ = [0, - i / 10 + 0.2, 0];
+                // window.console.log(equ);
+                return equ;
+            },
+
+        }).then(defaultPosition);
     }
+
 ;
 
 
