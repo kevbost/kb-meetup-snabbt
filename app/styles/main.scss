@@ -1,4 +1,4 @@
-// @import "../../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap";
+@import "../../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap";
 
 body, html {
   height: 100%;
@@ -7,7 +7,14 @@ body, html {
 body {
   transform: translateZ(1000px);
   -webkit-transform: translateZ(1000px);
+  font-family: "raleway",HelveticaNeue,"Helvetica Neue",Helvetica,Arial,sans-serif !important;
 }
+
+
+a {
+  color: lighten($link-color, 15%) !important;
+}
+
 
 .no-padding {
   padding: 0 !important;
@@ -17,9 +24,34 @@ body {
   text-align: center;
 }
 
-.container {
-  min-width: 720px;
-  max-width: 720px;
+.info-box {
+  position: relative;
+  border-bottom: 2px solid $gray;
+  .info-box-wrapper {
+    min-width: 720px;
+    max-width: 720px;
+    margin: 0 auto;
+    .credits {
+      font-size: 1em;
+      // color: $gray-lighter;
+    }
+
+    ul {
+      font-size: 1.2em;
+      padding-left: 0;
+      list-style: circle inside;
+    }
+
+  }
+  .toggler {
+    position: absolute;
+    bottom: -1px;
+    right: 0;
+    padding: 5px 10px;
+    background-color: white;
+    cursor: pointer;
+    border: 1px solid $gray;
+  }
 }
 
 .img-container {
@@ -38,12 +70,24 @@ body {
   transform-style: preserve-3d;
   -webkit-transform-style: preserve-3d;
   height: 100%;
-  // overflow-y: auto;
+  min-width: 720px;
+  max-width: 720px;
+  .toolbar {
+    $toolHeight: 50px;
+    padding: 0px 20px;
+    width: 100%;
+    min-width: 720px;
+    max-width: 720px;
+    background-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 0px 0px 0px 0px black;
+    .btn {
+      margin: 5px 0;
+    }
+  }
   #snabbt-stage {
     width: 100%;
     transform-style: preserve-3d;
     -webkit-transform-style: preserve-3d;
-    // background-color: red;
     img {
       &.default {
         max-height: 100px;
@@ -56,19 +100,3 @@ body {
   }
 }
 
-.toolbar {
-  $toolHeight: 50px;
-  padding: 0px 20px;
-  width: 100%;
-  // line-height: $toolHeight;
-  // height: $toolHeight;
-  // background-color: white;
-  background-color: rgba(255, 255, 255, 0.5);
-  // border-top: 2px solid black;
-  box-shadow: 0px 0px 0px 0px black;
-  // position: relative;
-  // bottom: 0;
-  .btn {
-    margin: 5px 0;
-  }
-}

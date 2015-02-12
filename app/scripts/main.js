@@ -1,8 +1,12 @@
 var snabbt,
     eventType,
     dataReturn,
-    Deck
+    Deck,
+    Typekit,
+    counter = 0
 ;
+
+try{Typekit.load();}catch(e){}
 
 var Deck = (function(data){
     this.image_list = [];
@@ -58,10 +62,56 @@ var Deck = (function(data){
         this.splitUp(Deck.image_list, (Deck.image_list.length / 4));
     };
 
+    this.snabbt_reset = function(elem) {
+        snabbt( $(elem), {
+            position: [0,0,0],
+            rotation: [0,0,0],
+            scale: [1,1],
+            skew: [0,0,0],
+            opacity: 1,
+            duration: 500,
+            delay: 0,
+            loop: 0
+        });
+    };
+
     return this;
 })();
 
-var snabbt;
+// var snabbt;
+
+
+var Toggler = (function(){
+    this.HEIGHT = $('.info-box').outerHeight();
+
+    this.checker = function(){
+        if (counter === 0){
+            $('.toggler').html('OPEN');
+            this.toggle_snabbt('.info-box', [0, -this.HEIGHT, 0], 0, 'ease', 500);
+            this.toggle_snabbt('.toggler', [0, 30, 0], 500);
+            this.toggle_snabbt('.snabbt-container', [0, -this.HEIGHT, 0], 0, 'ease', 500);
+            counter = 1;
+        } else {
+            $('.toggler').html('CLOSE');
+            this.toggle_snabbt('.info-box', [0,0, 0], 0, 'ease', 500);
+            this.toggle_snabbt('.toggler', [0, 0, 0], 200);
+            this.toggle_snabbt('.snabbt-container', [0, 0, 0], 0, 'ease', 500);
+            counter = 0;
+        }
+    };
+
+    this.toggle_snabbt = function(elem, position, delay, easing, duration){
+        snabbt( $(elem), {
+            position: position,
+            delay: delay,
+            easing: easing,
+            duration: duration
+        });
+    };
+
+    return this;
+})();
+
 
 var Gridify = (function(){
 
@@ -99,10 +149,24 @@ var Gridify = (function(){
 
 var Gridify = (function(){
 
+    this.hard_reset = function(){
+        counter = 0;
+        $('img').removeClass('one two three four');
+        $('span').removeClass('grid col-xs-3');
+        $('.img-container').removeClass('col-xs-3 grid').addClass('default');
+        $('.meetup-profile-thumbnail').removeClass('grid').addClass('default');
+        $('.gridify-btn').addClass('hidden');
+        Deck.snabbt_reset('img', 'stop');
+        Deck.snabbt_reset('span', 'stop');
+        Deck.snabbt_reset('div', 'stop');
+        Toggler.checker();
+    };
+
     this.gridify_deck = function(){
         $('.img-container').addClass('col-xs-3 grid').removeClass('default');
         $('.meetup-profile-thumbnail').addClass('grid').removeClass('default');
         $('.gridify-btn').removeClass('hidden');
+        $('.hard-reset').addClass('hidden');
         this.gridify_manage();
     };
 
@@ -148,7 +212,7 @@ var Gridify = (function(){
     };
 
     this.gridify_multi_element_fancy = function(){
-
+        $('.hard-reset').removeClass('hidden');
         var defaultPosition = {
             rotation:       [0, 0, 0],
             position:       [0, 0, 0],
@@ -341,27 +405,6 @@ var Wiggler = (function(){
 
 
 
-
-
-var Snbbt_Reference = function($elem, position, rotation, scale, width, height, opacity, duration, delay, loop, rotationPost, spring, deaccel) {
-    snabbt( $elem, 'attention', {
-        position: position,
-        rotation: rotation,
-        scale: scale,
-        width: width,
-        height: height,
-        opacity: opacity,
-        duration: duration,
-        delay: delay,
-        loop: loop,
-        rotationPost: rotationPost,
-        springConstant: spring,
-        springDeacceleration: deaccel
-    });
-};
-
-
-
 var Rotate = (function(){
 
     this.rotate_container = function() {
@@ -404,11 +447,7 @@ var Rotate = (function(){
 
 
 
-
-
-
-
-
+// Math.abs(num) * -1
 
 
 
@@ -427,6 +466,8 @@ $(document)
         }
         });
         Deck.reset();
+        // counter = 1;
+        Toggler.checker();
     })
     .on(eventType, '.wiggler', function(){
         Wiggler.attention_shake($('.meetup-profile-thumbnail'), [0, 0, 3], 15, 0.9);
@@ -460,5 +501,11 @@ $(document)
     })
     .on(eventType, '.gridify-multi-element-fancy', function() {
         Gridify.gridify_multi_element_fancy();
+    })
+    .on(eventType, '.toggler', function(){
+        Toggler.checker();
+    })
+    .on(eventType, '.hard-reset', function(){
+        Gridify.hard_reset();
     })
 ;
