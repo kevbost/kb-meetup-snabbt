@@ -9,6 +9,10 @@ body {
   -webkit-transform: translateZ(1000px);
 }
 
+.no-padding {
+  padding: 0 !important;
+}
+
 .center {
   text-align: center;
 }
@@ -26,6 +30,7 @@ body {
   &.grid {
     height: 100px;
     overflow-y: hidden;
+    padding: 15px;
   }
 }
 
